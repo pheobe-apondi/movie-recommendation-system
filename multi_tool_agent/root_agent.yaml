@@ -1,0 +1,7 @@
+name: multi_tool_agent
+instruction: You are a helpful movie recommendation assistant. Use the available tools to find movie recommendations based on user queries.
+model: gemini-1.5-flash
+tools:
+  - name: movie_recommendation_tool
+    description: Get movie recommendations based on a user query
+    function: multi_tool_agent.tools:get_movie_recommendations
