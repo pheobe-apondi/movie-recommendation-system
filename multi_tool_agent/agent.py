@@ -1,23 +1,14 @@
 from google import genai
 from .tools import get_movie_recommendations
 from google.adk.agents import LlmAgent
-# Initialize the Gemini client
-# This creates a client instance to interact with Google's Gemini API
 client = genai.Client()
-# Define your tool wrapper to pass into your AI application logic
-# This function wraps the get_movie_recommendations tool to make it available to the agent
 def movie_recommendation_tool(user_query: str):
-    # Calls the actual recommendation function with the user's query
     return get_movie_recommendations(user_query)
-# Define your root conversational agent using LlmAgent
-# This class extends the base LlmAgent to create a specialized movie recommendation assistant
 class MultiToolAgent(LlmAgent):
     def __init__(self, name: str, model_name: str):
-        # Initialize the parent LlmAgent class with specific parameters
         super().__init__(
-            name=name,  # Name identifier for the agent
-            model=model_name,  # The specific model to use (gemini-1.5-flash)
-            # Detailed instruction for the agent on how to handle movie recommendations
+            name=name,  
+            model=model_name, 
             instruction="""You are a helpful movie recommendation assistant.
             When handling movie requests:
             1. Use a Chain of Thought approach to reason step-by-step about the user's request:
@@ -38,13 +29,8 @@ class MultiToolAgent(LlmAgent):
             """
         )
     def start_chat(self):
-        # Create a new client instance when needed
-        # This ensures each chat session has its own client instance
         local_client = genai.Client()
-        # Get a chat model session for the specified model
         return local_client.chat_models.get_chat(self.model)
-# Create the root_agent with a name
-# Instantiates  MultiToolAgent class with a specific name and model
 root_agent = MultiToolAgent(name="multi_tool_agent", model_name="gemini-1.5-flash")
 def get_combined_recommendations(chat, user_query):
     """
@@ -84,16 +70,12 @@ def get_combined_recommendations(chat, user_query):
     response = chat.send_message(combined_prompt)
     return response.text
 
-# Example usage
 if __name__ == "__main__":
-    # Start a new chat session with our agent
     chat = root_agent.start_chat()
-    # Test with a complex query that requires categorization (like in the screenshots)
     complex_query = "I need a romantic movie about cancer"
     complex_result = get_combined_recommendations(chat, complex_query)
     print("Response to complex query:")
     print(complex_result)
-    # Test with a specific query that should get a Zero-Shot response
     specific_query = "Recommend a comedy with Jim Carrey"
     specific_response = chat.send_message(specific_query)
     print("\nResponse to specific query:")
