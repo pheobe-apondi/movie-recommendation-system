@@ -4,16 +4,12 @@ from typing import List, Dict, Any
 import os
 import logging
 
-# Import new Google GenAI SDK client
 from google import genai
 
-# Configure Gemini API client
 client = genai.Client()
 
-# Use PersistentClient pointing to your persisted embedding storage
 chroma_client = chromadb.PersistentClient(path="./chromadb_persist", settings=Settings())
 
-# Access your collection
 collection = chroma_client.get_or_create_collection(name="movie_collection")
 logging.critical(f"Loaded collection: {collection.name}")
 
@@ -35,7 +31,6 @@ def get_movie_recommendations(user_query: str) -> List[Dict[str, Any]]:
         })
     return recommendations
 
-# Example of calling the Gemini model (optional)
 def generate_text(prompt: str) -> str:
     response = client.models.generate_content(
         model="gemini-2.5-flash",
